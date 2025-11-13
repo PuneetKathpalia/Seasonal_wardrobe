@@ -20,12 +20,12 @@ pipeline {
             steps {
                 echo '🧹 Cleaning up old containers...'
                 bat '''
-                    docker stop seasonal-wardrobe-backend || exit 0
-                    docker rm seasonal-wardrobe-backend || exit 0
-                    docker stop seasonal-wardrobe-frontend || exit 0
-                    docker rm seasonal-wardrobe-frontend || exit 0
-                    docker stop seasonal-wardrobe-mongodb || exit 0
-                    docker rm seasonal-wardrobe-mongodb || exit 0
+                docker stop seasonal-wardrobe-backend || exit 0
+                docker rm seasonal-wardrobe-backend || exit 0
+                docker stop seasonal-wardrobe-frontend || exit 0
+                docker rm seasonal-wardrobe-frontend || exit 0
+                docker stop seasonal-wardrobe-mongodb || exit 0
+                docker rm seasonal-wardrobe-mongodb || exit 0
                 '''
             }
         }
@@ -52,10 +52,8 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 echo '🐳 Building Docker images...'
-                bat """
-                    docker build -t %IMAGE_PREFIX%-backend:%VERSION% ./backend
-                    docker build -t %IMAGE_PREFIX%-frontend:%VERSION% ./frontend
-                """
+                bat 'docker build -t %IMAGE_PREFIX%-backend:%VERSION% ./backend'
+                bat 'docker build -t %IMAGE_PREFIX%-frontend:%VERSION% ./frontend'
             }
         }
 
@@ -64,10 +62,8 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry("https://${DOCKER_REGISTRY}", DOCKER_CREDENTIALS_ID) {
-                        bat """
-                            docker push %IMAGE_PREFIX%-backend:%VERSION%
-                            docker push %IMAGE_PREFIX%-frontend:%VERSION%
-                        """
+                        bat 'docker push %IMAGE_PREFIX%-backend:%VERSION%'
+                        bat 'docker push %IMAGE_PREFIX%-frontend:%VERSION%'
                     }
                 }
             }
@@ -76,10 +72,7 @@ pipeline {
         stage('Deploy (Docker Compose)') {
             steps {
                 echo '🚀 Deploying application...'
-                bat """
-                    docker-compose down
-                    docker-compose up -d --build
-                """
+                bat 'docker-compose down && docker-compose up -d --build'
             }
         }
     }
@@ -89,7 +82,7 @@ pipeline {
             echo '🎉 Deployment successful!'
         }
         failure {
-            echo '❌ Build failed!'
+            echo '❌ Build failed! Please check Jenkins logs for details.'
         }
     }
 }
