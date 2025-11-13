@@ -16,6 +16,20 @@ pipeline {
             }
         }
 
+        stage('Cleanup Old Containers') {
+            steps {
+                echo '🧹 Cleaning up old containers...'
+                bat '''
+                    docker stop seasonal-wardrobe-backend || exit 0
+                    docker rm seasonal-wardrobe-backend || exit 0
+                    docker stop seasonal-wardrobe-frontend || exit 0
+                    docker rm seasonal-wardrobe-frontend || exit 0
+                    docker stop seasonal-wardrobe-mongodb || exit 0
+                    docker rm seasonal-wardrobe-mongodb || exit 0
+                '''
+            }
+        }
+
         stage('Install Dependencies') {
             parallel {
                 stage('Backend') {
