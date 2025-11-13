@@ -12,7 +12,7 @@ CORS(app)
 chat_sessions = {}
 
 
-WEATHER_API_KEY = os.getenv('WEATHER_API_KEY', 'your_api_key_here')
+WEATHER_API_KEY = os.getenv('WEATHER_API_KEY', '093a44f57ca807d2b7a6f6b1163da88c')
 
 @app.route('/')
 def home():
